@@ -52,8 +52,24 @@ def handle_bullets(player_bullets, player_ship):
 def main():
     run = True
     player_ship = pygame.Rect(WIDTH//2 - SPACESHIP_WIDTH//2, HEIGHT - SPACESHIP_HEIGHT - 30, SPACESHIP_WIDTH, SPACESHIP_HEIGHT)
-    enemy_ship = pygame.Rect(WIDTH//2 - SPACESHIP_WIDTH//2, HEIGHT - SPACESHIP_HEIGHT - 30, SPACESHIP_WIDTH, SPACESHIP_HEIGHT)
+    # enemy_ship1 = pygame.Rect(WIDTH//2 - SPACESHIP_WIDTH//2, HEIGHT - SPACESHIP_HEIGHT - 30, SPACESHIP_WIDTH, SPACESHIP_HEIGHT)
+    # enemy_ship2 = pygame.Rect(WIDTH//2 - SPACESHIP_WIDTH//2, HEIGHT - SPACESHIP_HEIGHT - 30, SPACESHIP_WIDTH, SPACESHIP_HEIGHT)
+    # enemy_ship3 = pygame.Rect(WIDTH//2 - SPACESHIP_WIDTH//2, HEIGHT - SPACESHIP_HEIGHT - 30, SPACESHIP_WIDTH, SPACESHIP_HEIGHT)
     player_bullets = []
+    enemy_ship_list = [
+        [pygame.Rect(WIDTH//2 - SPACESHIP_WIDTH//2, HEIGHT - SPACESHIP_HEIGHT - 30, SPACESHIP_WIDTH, SPACESHIP_HEIGHT)],
+        [pygame.Rect(WIDTH//2 - SPACESHIP_WIDTH//2, HEIGHT - SPACESHIP_HEIGHT - 30, SPACESHIP_WIDTH, SPACESHIP_HEIGHT)],
+        [pygame.Rect(WIDTH//2 - SPACESHIP_WIDTH//2, HEIGHT - SPACESHIP_HEIGHT - 30, SPACESHIP_WIDTH, SPACESHIP_HEIGHT)]]
+    
+    # for ship_row in enemy_ship_list:
+        # ship_row.append(pygame.Rect(WIDTH//2 - SPACESHIP_WIDTH//2, HEIGHT - SPACESHIP_HEIGHT - 30, SPACESHIP_WIDTH, SPACESHIP_HEIGHT))
+        # for ship in ship_row:
+            
+    for i in range(0, 3):
+        for j in range(1,10):
+            # print("[" + str(i) + "]" + "[" + str(j) + "]")
+            enemy_ship_list[i].append(pygame.Rect(WIDTH//2 - SPACESHIP_WIDTH//2, HEIGHT - SPACESHIP_HEIGHT - 30, SPACESHIP_WIDTH, SPACESHIP_HEIGHT))
+    
     
     clock = pygame.time.Clock()
     while run:
@@ -70,7 +86,6 @@ def main():
         
         keys_pressed = pygame.key.get_pressed()
         handle_player_movement(keys_pressed, player_ship)
-        handle_enemy_movement(keys_pressed, enemy_ship)
         handle_bullets(player_bullets, player_ship)
         draw_window(player_ship, player_bullets)
         
