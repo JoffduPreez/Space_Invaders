@@ -19,7 +19,7 @@ To do:
 <!-- 2. add colisions/remove ships when hit -->
 <!-- 3. add enemy movement -->
 <!-- 4. add enemy shooting -->
-5. add player health
+<!-- 5. add player health -->
 6. add game over conditions
 7. add a game score
 8. respawn ships again if all defeated, have thier starting speed increase by 1

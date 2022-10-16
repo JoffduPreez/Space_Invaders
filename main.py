@@ -1,6 +1,7 @@
 import pygame
 import random
 import os
+pygame.font.init()
 
 WIDTH, HEIGHT = 700, 700
 ENEMY_AREA_WIDTH = 500
@@ -18,6 +19,7 @@ ENEMY_SHIPS_PER_ROW = 8
 SPACE_BETWEEN_ROWS = 25
 ENEMY_SPEED = 1
 PLAYER_HIT = pygame.USEREVENT + 1
+HEALTH_FONT = pygame.font.SysFont('comicsans', 40)
 
 WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
 BORDER = pygame.Rect(0, HEIGHT - SPACESHIP_HEIGHT - 60, WIDTH, 5)
@@ -33,7 +35,7 @@ ENEMY_SHIP_IMAGE = pygame.transform.rotate(pygame.transform.scale(
     ENEMY_IMAGE, (SPACESHIP_WIDTH, SPACESHIP_HEIGHT)), 180)
 
 
-def draw_window(player_ship, player_bullets, enemy_ship_list, enemy_bullets):
+def draw_window(player_ship, player_bullets, enemy_ship_list, enemy_bullets, player_health):
     WINDOW.blit(SPACE, (0, 0))
     
     pygame.draw.rect(WINDOW, WHITE, BORDER) # to be removed later
@@ -44,6 +46,10 @@ def draw_window(player_ship, player_bullets, enemy_ship_list, enemy_bullets):
 
     for bullet in enemy_bullets:
         pygame.draw.rect(WINDOW, RED, bullet)
+        
+    player_health_text = HEALTH_FONT.render(
+        "Health: " + str(player_health), 1, WHITE)
+    WINDOW.blit(player_health_text, (10, 10))
         
     index = 0
     for enemy_ship_row in enemy_ship_list:
@@ -188,7 +194,8 @@ def handle_enemy_bullets(enemy_bullets, player_ship):
         if bullet.y > HEIGHT:
             enemy_bullets.remove(bullet)
         if player_ship.colliderect(bullet):
-            pygame.event.post(pygame.event.Event(PLAYER_HIT))            
+            enemy_bullets.remove(bullet)
+            pygame.event.post(pygame.event.Event(PLAYER_HIT))
 
 
 def main():
@@ -233,7 +240,7 @@ def main():
             generate_enemy_bullet(enemy_ship_list, front_ships_list, enemy_bullets)
         handle_enemy_bullets(enemy_bullets, player_ship)
         
-        draw_window(player_ship, player_bullets, enemy_ship_list, enemy_bullets)
+        draw_window(player_ship, player_bullets, enemy_ship_list, enemy_bullets, player_health)
         
     pygame.quit()
 
