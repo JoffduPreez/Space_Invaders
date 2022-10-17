@@ -20,7 +20,7 @@ To do:
 <!-- 3. add enemy movement -->
 <!-- 4. add enemy shooting -->
 <!-- 5. add player health -->
-6. add game over conditions
+<!-- 6. add game over conditions -->
 7. add a game score
 8. respawn ships again if all defeated, have thier starting speed increase by 1
 9. increase fire rate of enemy the more ships you shoot?

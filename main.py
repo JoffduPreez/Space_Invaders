@@ -72,6 +72,14 @@ def game_over():
     pygame.time.delay(2000)
     pygame.quit()
 
+def player_won():
+    draw_text = WINNER_FONT.render("You Won!", 1, WHITE)
+    WINDOW.blit(draw_text, (WIDTH/2 - draw_text.get_width() /
+                         2, HEIGHT/2 - draw_text.get_height()/2))
+    pygame.display.update()
+    pygame.time.delay(2000)
+    pygame.quit()
+
     
 def create_enemy_ships():
     space_taken_by_ships = ENEMY_SHIPS_PER_ROW * SPACESHIP_WIDTH
@@ -240,10 +248,15 @@ def main():
         handle_player_movement(keys_pressed, player_ship)
         enemy_direction = handle_enemy_movement(enemy_ship_list, enemy_direction)
         kill_count = handle_bullets(player_bullets, player_ship, enemy_ship_list, kill_count, front_ships_list)
+        if kill_count == ENEMY_SHIP_ROWS * ENEMY_SHIPS_PER_ROW:
+            player_won()
         
         # deal with the generation and movement of enemy bullets
-        enemy_shoot_timer += 1
-        if enemy_shoot_timer == FPS:
+        if kill_count <= (ENEMY_SHIP_ROWS * ENEMY_SHIPS_PER_ROW)/2:
+            enemy_shoot_timer += 1
+        elif kill_count >= (ENEMY_SHIP_ROWS * ENEMY_SHIPS_PER_ROW)/2:
+            enemy_shoot_timer += 2
+        if enemy_shoot_timer >= FPS:
             enemy_shoot_timer = 0
             generate_enemy_bullet(enemy_ship_list, front_ships_list, enemy_bullets)
         handle_enemy_bullets(enemy_bullets, player_ship)
