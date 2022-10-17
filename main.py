@@ -20,6 +20,7 @@ SPACE_BETWEEN_ROWS = 25
 ENEMY_SPEED = 1
 PLAYER_HIT = pygame.USEREVENT + 1
 HEALTH_FONT = pygame.font.SysFont('comicsans', 40)
+WINNER_FONT = pygame.font.SysFont('comicsans', 100)
 
 WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
 BORDER = pygame.Rect(0, HEIGHT - SPACESHIP_HEIGHT - 60, WIDTH, 5)
@@ -61,6 +62,16 @@ def draw_window(player_ship, player_bullets, enemy_ship_list, enemy_bullets, pla
             index += 1
     
     pygame.display.update()
+    
+    
+def game_over():
+    draw_text = WINNER_FONT.render("Game Over", 1, WHITE)
+    WINDOW.blit(draw_text, (WIDTH/2 - draw_text.get_width() /
+                         2, HEIGHT/2 - draw_text.get_height()/2))
+    pygame.display.update()
+    pygame.time.delay(2000)
+    pygame.quit()
+
     
 def create_enemy_ships():
     space_taken_by_ships = ENEMY_SHIPS_PER_ROW * SPACESHIP_WIDTH
@@ -132,15 +143,10 @@ def shift_enemy_down(enemy_ship_list):
         index = 0
         for ship in enemy_ship_row:
             if enemy_ship_row[index] != 0:
+                if ship.y + (SPACESHIP_HEIGHT - SPACE_BETWEEN_ROWS) >= HEIGHT - SPACESHIP_HEIGHT - 75:
+                    game_over()
                 ship.y += (SPACESHIP_HEIGHT - SPACE_BETWEEN_ROWS)
             index += 1
-            
-def print_enemy_ships(enemy_ship_list):
-    i = 0
-    for enemy_ship_row in enemy_ship_list:
-        for ship in enemy_ship_row:
-            print(str(i) + " ", end = ' ')
-            i += 1
 
 
 def generate_enemy_bullet(enemy_ship_list, front_ships_list, enemy_bullets):
@@ -227,6 +233,8 @@ def main():
                     #BULLET_FIRE_SOUND.play()
             if event.type == PLAYER_HIT:
                 player_health -= 1
+                if player_health <= 0:
+                    game_over()
                     
         keys_pressed = pygame.key.get_pressed()
         handle_player_movement(keys_pressed, player_ship)
