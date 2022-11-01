@@ -1,7 +1,9 @@
 import pygame
 import random
 import os
+from pygame import mixer
 pygame.font.init()
+pygame.init()
 
 WIDTH, HEIGHT = 700, 700
 ENEMY_AREA_WIDTH = 500
@@ -21,6 +23,8 @@ ENEMY_SPEED = 1
 PLAYER_HIT = pygame.USEREVENT + 1
 HEALTH_FONT = pygame.font.SysFont('comicsans', 40)
 WINNER_FONT = pygame.font.SysFont('comicsans', 100)
+BULLET_SOUND = mixer.Sound("assets/laser.wav")
+ENEMY_HIT_SOUND = mixer.Sound("assets/explosion.wav")
 
 WINDOW = pygame.display.set_mode((WIDTH, HEIGHT))
 BORDER = pygame.Rect(0, HEIGHT - SPACESHIP_HEIGHT - 60, WIDTH, 5)
@@ -72,6 +76,7 @@ def game_over():
     pygame.time.delay(2000)
     pygame.quit()
 
+
 def player_won():
     draw_text = WINNER_FONT.render("You Won!", 1, WHITE)
     WINDOW.blit(draw_text, (WIDTH/2 - draw_text.get_width() /
@@ -94,7 +99,7 @@ def create_enemy_ships():
         [pygame.Rect(difference + space_between_ships, SPACE_BETWEEN_ROWS * 3 + SPACESHIP_HEIGHT * 2, SPACESHIP_WIDTH, SPACESHIP_HEIGHT)],
         [pygame.Rect(difference + space_between_ships, SPACE_BETWEEN_ROWS * 4 + SPACESHIP_HEIGHT * 3, SPACESHIP_WIDTH, SPACESHIP_HEIGHT)]]
     
-        # used to determine where to position the enemy ships
+    # used to determine where to position the enemy ships
     left_distance_placeholder = difference + space_between_ships + SPACESHIP_WIDTH + space_between_ships
     top_distance_placeholder = SPACE_BETWEEN_ROWS
     
@@ -169,10 +174,6 @@ def generate_enemy_bullet(enemy_ship_list, front_ships_list, enemy_bullets):
     bullet = pygame.Rect(ship.x + ship.width//2 - 2, ship.y, 5, 10)
     enemy_bullets.append(bullet)
     
-    # i just realized, i am not accounting for the ships that have been shot when i do column_to_shoot
-    # for example if the front row has had 3 ships shot down, column_to_shoot should be randomized from 0 - however many ships are left, not from 0 - ENEMY_SHIPS_PER_ROW
-    # at the same time, if we want to shoot from the second last ship, then we would do column 7 (assuming 8 columns). This would be index 6. But if the front row has had 3 ships shot down, then we actually need to do index 3. Thus, we need to keep track of how many ships have been shot down per row
-    
 
 def handle_bullets(player_bullets, player_ship, enemy_ship_list, kill_count, front_ships_list):
     global ENEMY_SPEED
@@ -189,11 +190,10 @@ def handle_bullets(player_bullets, player_ship, enemy_ship_list, kill_count, fro
             for ship in enemy_ship_row:
                 if enemy_ship_row[index] != 0 and ship.colliderect(bullet):
                     front_ships_list[index] -= 1
-                    print(front_ships_list)
-                    
                     enemy_ship_row[index] = 0
                     player_bullets.remove(bullet)
                     kill_count += 1
+                    ENEMY_HIT_SOUND.play()
                     
                     if kill_count % 5 == 0:
                         ENEMY_SPEED += 1
@@ -223,6 +223,9 @@ def main():
     enemy_ship_list = create_enemy_ships()
     front_ships_list = [] # this array records what row the closest ship is to the player for each column
     enemy_shoot_timer = 0
+
+    mixer.music.load("assets/background.wav")
+    mixer.music.play(-1)
     
     for i in range(0, ENEMY_SHIPS_PER_ROW):
         front_ships_list.append(ENEMY_SHIP_ROWS-1)    
@@ -237,6 +240,7 @@ def main():
                 if event.key == pygame.K_SPACE and len(player_bullets) < MAX_BULLETS:
                     bullet = pygame.Rect(
                         player_ship.x + player_ship.width//2 - 2, player_ship.y, 5, 10)
+                    BULLET_SOUND.play()
                     player_bullets.append(bullet)
                     #BULLET_FIRE_SOUND.play()
             if event.type == PLAYER_HIT:
